@@ -1,0 +1,46 @@
+---
+- name: Ensure the data directories exist
+  file:
+    path: "{{ base_data_path }}/{{ item }}"
+    state: directory
+    mode: 0777
+  loop:
+    - "conf"
+    - "tmp"
+
+- name: Parametrize the configuration file
+  template:
+    src: "agent.j2.conf"
+    dest: "{{ base_data_path }}/conf/agent.conf"
+  notify: restart concord_agent
+
+- name: Create the DIND container
+  docker_container:
+    name: dind
+    image: "library/docker:stable-dind"
+    state: started
+    pull: true
+    command: "-H tcp://localhost:6666"
+    network_mode: host
+    privileged: yes
+    restart_policy: unless-stopped
+    volumes:
+      - "{{ base_data_path }}/tmp:/tmp"
+
+- name: Create the agent container
+  docker_container:
+    name: agent
+    image: "walmartlabs/concord-agent:latest"
+    pull: true
+    state: started
+    env:
+      CONCORD_CFG_FILE: "/opt/concord/data/conf/agent.conf"
+      CONCORD_DOCKER_LOCAL_MODE: "false"
+      CONCORD_MAVEN_CFG: "/opt/concord/data/conf/mvn.json"
+      CONCORD_TMP_DIR: "/opt/concord/data/tmp"
+      DOCKER_HOST: "tcp://localhost:6666"
+    network_mode: host
+    restart_policy: unless-stopped
+    volumes:
+      - "{{ base_data_path }}:/opt/concord/data"
+  register: docker_container_concord_agent

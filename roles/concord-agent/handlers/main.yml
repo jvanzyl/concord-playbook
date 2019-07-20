@@ -1,0 +1,6 @@
+---
+- name: restart concord_agent
+  docker_container:
+    name: agent
+    restart: yes
+  when: docker_container_concord_agent.changed == false

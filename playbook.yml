@@ -1,0 +1,39 @@
+---
+
+# COMMON
+
+- hosts: all
+  gather_facts: no
+  tasks:
+    # TODO RPM-based distros support
+    - name: Install Python
+      become: yes
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+- hosts: all
+  roles:
+  - name: "geerlingguy.pip"
+    become: yes
+    vars:
+      pip_install_packages:
+        - name: docker
+
+  - name: "geerlingguy.docker"
+    become: yes
+    vars:
+      docker_users:
+        - "{{ ansible_ssh_user }}"
+
+
+# CONCORD SERVER INSTANCES
+
+- hosts: servers
+  roles:
+    - concord-server
+    - concord-console
+
+# CONCORD AGENT INSTANCES
+
+- hosts: agents
+  roles:
+    - concord-agent

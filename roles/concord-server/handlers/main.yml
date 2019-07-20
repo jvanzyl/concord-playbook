@@ -1,0 +1,6 @@
+---
+- name: restart concord_server
+  docker_container:
+    name: server
+    restart: yes
+  when: docker_container_concord_server.changed == false

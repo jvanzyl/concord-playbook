@@ -1,0 +1,47 @@
+---
+- name: Ensure data directories exist
+  file:
+    path: "{{ base_data_path }}/{{ item }}"
+    state: directory
+    mode: 0777
+  loop:
+    - "form_serv"
+    - "repo_cache"
+    - "conf"
+    - "logs"
+    - "tmp"
+  notify: restart concord_server
+
+- name: Create the server's configuration file
+  template:
+    src: server.j2.conf
+    dest: "{{base_data_path}}/conf/server.conf"
+  notify: restart concord_server
+
+- name: Create the server container
+  docker_container:
+    name: server
+    image: "walmartlabs/concord-server:latest"
+    pull: true
+    state: started
+    env:
+      CONCORD_CFG_FILE: "/opt/concord/data/conf/server.conf"
+      CONCORD_ENV: "demo"
+      CONCORD_JAVA_OPTS: "-Xms512m -Xmx512m"
+      CONCORD_TMP_DIR: "/opt/concord/data/tmp"
+      FORM_SERVER_DIR: "/opt/concord/data/form_serv"
+      GC_LOG_DIR: "/opt/concord/data/logs"
+    network_mode: host
+    volumes:
+      - "{{ base_data_path }}:/opt/concord/data"
+    restart_policy: unless-stopped
+  register: docker_container_concord_server
+
+- name: Verify the server is up and running
+  uri:
+    url: "http://localhost:8001/api/v1/server/version"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 12
+  delay: 5

@@ -1,0 +1,3 @@
+---
+# maximum number of connections to the main DB
+main_db_max_pool_size: 5

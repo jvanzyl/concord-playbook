@@ -1,0 +1,19 @@
+configuration:
+  dependencies:
+    - mvn://com.walmartlabs.concord.plugins.basic:ansible-tasks:1.26.0
+
+flows:
+  default:
+    - task: ansible
+      in:
+        playbook: playbook.yml
+        roles:
+          - src: "https://github.com/geerlingguy/ansible-role-docker"
+            name: "geerlingguy.docker"
+          - src: "https://github.com/geerlingguy/ansible-role-pip"
+            name: "geerlingguy.pip"
+        auth:
+          privateKey:
+            user: "ubuntu"
+            path: "concord.pem"
+        inventoryFile: "inventory.ini"

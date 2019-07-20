@@ -1,0 +1,3 @@
+---
+# base path to store configuration and work files
+base_data_path: "{{ ansible_env.HOME }}/concord"
