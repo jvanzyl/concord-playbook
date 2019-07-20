@@ -16,6 +16,7 @@
   notify: restart concord_console
 
 - name: Create the console container
+  become: true
   docker_container:
     name: console
     image: "walmartlabs/concord-console:latest"

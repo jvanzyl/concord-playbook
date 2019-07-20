@@ -10,21 +10,6 @@
       become: yes
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
-- hosts: all
-  roles:
-  - name: "geerlingguy.pip"
-    become: yes
-    vars:
-      pip_install_packages:
-        - name: docker
-
-  - name: "geerlingguy.docker"
-    become: yes
-    vars:
-      docker_users:
-        - "{{ ansible_ssh_user }}"
-
-
 # CONCORD SERVER INSTANCES
 
 - hosts: servers

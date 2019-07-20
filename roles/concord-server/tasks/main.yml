@@ -19,6 +19,7 @@
   notify: restart concord_server
 
 - name: Create the server container
+  become: true
   docker_container:
     name: server
     image: "walmartlabs/concord-server:latest"

@@ -19,6 +19,8 @@ Currently tested only on AWS with Ubuntu computes.
 - run:
   ```
   $ ansible-galaxy install -r requirements.yml
+
+  $ export ANSIBLE_HOST_KEY_CHECKING=false
+  $ export ANSIBLE_PIPELINING=true
   $ ansible-playbook -u ubuntu --private-key=concord.pem -i inventory.ini playbook.yml
   ```
-

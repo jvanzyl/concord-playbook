@@ -15,6 +15,7 @@
   notify: restart concord_agent
 
 - name: Create the DIND container
+  become: true
   docker_container:
     name: dind
     image: "library/docker:stable-dind"
@@ -28,6 +29,7 @@
       - "{{ base_data_path }}/tmp:/tmp"
 
 - name: Create the agent container
+  become: true
   docker_container:
     name: agent
     image: "walmartlabs/concord-agent:latest"
