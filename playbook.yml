@@ -1,15 +1,5 @@
 ---
 
-# COMMON
-
-- hosts: all
-  gather_facts: no
-  tasks:
-    # TODO RPM-based distros support
-    - name: Install Python
-      become: yes
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-
 # CONCORD SERVER INSTANCES
 
 - hosts: servers
