@@ -1,5 +1,8 @@
 ---
 
+- hosts: all
+  gather_facts: no
+
 # CONCORD SERVER INSTANCES
 
 - hosts: servers
