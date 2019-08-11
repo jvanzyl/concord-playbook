@@ -2,6 +2,10 @@
 
 - hosts: all
   gather_facts: no
+  tasks:
+    - name: Install Python
+      become: yes
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
 # CONCORD SERVER INSTANCES
 
